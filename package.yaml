@@ -27,6 +27,7 @@ dependencies:
 - wai-middleware-static >= 0.8 && < 1
 - aeson >= 1.4 && < 2
 - text >= 1.2 && < 2
+- bytestring >= 0.10 && < 1
 
 library:
   source-dirs: src

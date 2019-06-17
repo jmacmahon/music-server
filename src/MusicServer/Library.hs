@@ -20,15 +20,15 @@ data Track = Track {
 class Library l where
   allTracks :: l -> IO [Track]
 
-data ListLibrary = ListLibrary { llList :: [Track] } deriving (Show)
+data ListLibrary = ListLibrary { llList :: IO [Track] }
 instance Library ListLibrary where
-  allTracks = return . llList
+  allTracks = llList
 
-buildListLibrary :: String -> IO ListLibrary
-buildListLibrary root = do
+buildListLibrary :: String -> ListLibrary
+buildListLibrary root = ListLibrary $ do
   files <- findFiles root
   tracks <- catMaybes <$> mapM parseTrack files
-  return $ ListLibrary tracks
+  return tracks
 
 findFiles :: String -> IO [String]
 findFiles = find always (fileType ==? RegularFile ||? fileType ==? SymbolicLink)
