@@ -1,6 +1,9 @@
 module Main where
 
-import Lib
+import MusicServer.Server (runServer, AppEnv (AppEnv))
+import MusicServer.Library (buildListLibrary)
 
 main :: IO ()
-main = someFunc
+main = let
+  env = AppEnv (buildListLibrary "/home/joe/Music")
+  in runServer env

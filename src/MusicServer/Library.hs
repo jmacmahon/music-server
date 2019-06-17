@@ -18,11 +18,11 @@ data Track = Track {
 } deriving (Show)
 
 class Library l where
-  allTracks :: l -> IO [Track]
+  lAllTracks :: l -> IO [Track]
 
 data ListLibrary = ListLibrary { llList :: IO [Track] }
 instance Library ListLibrary where
-  allTracks = llList
+  lAllTracks = llList
 
 buildListLibrary :: FilePath -> ListLibrary
 buildListLibrary root = ListLibrary $ do
