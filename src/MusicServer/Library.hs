@@ -14,7 +14,7 @@ data Metadata = Metadata {
 
 data Track = Track {
   tMetadata :: Metadata,
-  tFilepath :: String
+  tFilepath :: FilePath
 } deriving (Show)
 
 class Library l where
@@ -24,16 +24,16 @@ data ListLibrary = ListLibrary { llList :: IO [Track] }
 instance Library ListLibrary where
   allTracks = llList
 
-buildListLibrary :: String -> ListLibrary
+buildListLibrary :: FilePath -> ListLibrary
 buildListLibrary root = ListLibrary $ do
   files <- findFiles root
   tracks <- catMaybes <$> mapM parseTrack files
   return tracks
 
-findFiles :: String -> IO [String]
+findFiles :: FilePath -> IO [FilePath]
 findFiles = find always (fileType ==? RegularFile ||? fileType ==? SymbolicLink)
 
-parseTrack :: String -> IO (Maybe Track)
+parseTrack :: FilePath -> IO (Maybe Track)
 parseTrack filePath = let
   unsafeJust :: IO (Maybe Track)
   unsafeJust = Just <$> unsafeParseTrack filePath
@@ -41,7 +41,7 @@ parseTrack filePath = let
   nothingHandler = const $ return Nothing
   in catch unsafeJust nothingHandler
 
-unsafeParseTrack :: String -> IO Track
+unsafeParseTrack :: FilePath -> IO Track
 unsafeParseTrack filePath = do
   metadata <- getTags filePath metadataGetter
   return $ Track metadata filePath
