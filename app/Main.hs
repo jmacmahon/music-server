@@ -1,6 +1,7 @@
 module Main where
 
-import MusicServer.Server (runServer, AppEnv (AppEnv))
+import MusicServer.Server (runServer)
+import MusicServer.Server.Environment (AppEnv (AppEnv))
 import MusicServer.Library (buildListLibrary)
 
 main :: IO ()
