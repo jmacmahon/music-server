@@ -14,7 +14,7 @@ data Metadata = Metadata {
 
 data Track = Track {
   tMetadata :: Metadata,
-  tFilePath :: String
+  tFilepath :: String
 } deriving (Show)
 
 class Library l where
