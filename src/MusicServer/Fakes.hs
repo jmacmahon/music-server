@@ -2,7 +2,8 @@
 
 module MusicServer.Fakes where
 
-import MusicServer.Library (ListLibrary (ListLibrary), Track (Track), Metadata (Metadata))
+import MusicServer.Library.Metadata (Track (Track), Metadata (Metadata))
+import MusicServer.Library.ListLibrary (ListLibrary (ListLibrary))
 
 fakeLibrary :: ListLibrary
 fakeLibrary = ListLibrary $ return [

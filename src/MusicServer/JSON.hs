@@ -2,7 +2,7 @@
 
 module MusicServer.JSON where
 
-import MusicServer.Library (Metadata, Track, mdTitle, mdArtist, mdAlbum, mdTrackNumber, tMetadata, tFilepath)
+import MusicServer.Library.Metadata (Metadata, Track, mdTitle, mdArtist, mdAlbum, mdTrackNumber, tMetadata, tFilepath)
 import Data.Aeson (ToJSON, toJSON, object, (.=))
 
 instance ToJSON Metadata where

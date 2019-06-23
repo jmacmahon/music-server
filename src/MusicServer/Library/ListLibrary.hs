@@ -1,39 +1,12 @@
-module MusicServer.Library where
+module MusicServer.Library.ListLibrary where
 
 import System.FilePath.Find (find, always, fileType, FileType (RegularFile, SymbolicLink), (==?), (||?))
 import Data.Maybe (catMaybes)
 import Sound.HTagLib (TagGetter, getTags, HTagLibException, titleGetter, unTitle, artistGetter, unArtist, albumGetter, unAlbum, trackNumberGetter, unTrackNumber)
 import Data.Text (Text)
 import Control.Exception (IOException, catch)
-
-data Metadata = Metadata {
-  mdTitle :: Text,
-  mdArtist :: Text,
-  mdAlbum :: Text,
-  mdTrackNumber :: Maybe Int
-} deriving (Show)
-
-data Track = Track {
-  tMetadata :: Metadata,
-  tFilepath :: FilePath
-} deriving (Show)
-
-class Library l where
-  lAllTracks :: l -> IO [Track]
-  lAlbumQuery :: Text -> l -> IO [Track]
-  lAlbumQuery album library = let
-      pred :: Track -> Bool
-      pred = (== album) . mdAlbum . tMetadata
-    in do
-      allTracks <- lAllTracks library
-      return $ filter pred allTracks
-  lArtistQuery :: Text -> l -> IO [Track]
-  lArtistQuery artist library = let
-      pred :: Track -> Bool
-      pred = (== artist) . mdArtist . tMetadata
-    in do
-      allTracks <- lAllTracks library
-      return $ filter pred allTracks
+import MusicServer.Library.Generic (Library, lAllTracks)
+import MusicServer.Library.Metadata (Track (Track), Metadata (Metadata))
 
 data ListLibrary = ListLibrary { llList :: IO [Track] }
 instance Library ListLibrary where

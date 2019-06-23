@@ -2,7 +2,7 @@ module MusicServer.Server.Environment where
 
 import Control.Monad.Trans.Reader (ReaderT, ask, runReaderT)
 import Web.Scotty (ActionM, ScottyM, RoutePattern, liftAndCatchIO, get)
-import MusicServer.Library (Library)
+import MusicServer.Library.Generic (Library)
 import Control.Monad.Trans.Class (lift)
 
 data AppEnv l = AppEnv { aeLibrary :: l }
