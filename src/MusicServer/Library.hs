@@ -2,14 +2,15 @@ module MusicServer.Library where
 
 import System.FilePath.Find (find, always, fileType, FileType (RegularFile, SymbolicLink), (==?), (||?))
 import Data.Maybe (catMaybes)
-import Sound.HTagLib (TagGetter, getTags, HTagLibException, titleGetter, unTitle, artistGetter, unArtist, albumGetter, unAlbum)
+import Sound.HTagLib (TagGetter, getTags, HTagLibException, titleGetter, unTitle, artistGetter, unArtist, albumGetter, unAlbum, trackNumberGetter, unTrackNumber)
 import Data.Text (Text)
 import Control.Exception (IOException, catch)
 
 data Metadata = Metadata {
   mdTitle :: Text,
   mdArtist :: Text,
-  mdAlbum :: Text
+  mdAlbum :: Text,
+  mdTrackNumber :: Maybe Int
 } deriving (Show)
 
 data Track = Track {
@@ -19,6 +20,20 @@ data Track = Track {
 
 class Library l where
   lAllTracks :: l -> IO [Track]
+  lAlbumQuery :: Text -> l -> IO [Track]
+  lAlbumQuery album library = let
+      pred :: Track -> Bool
+      pred = (== album) . mdAlbum . tMetadata
+    in do
+      allTracks <- lAllTracks library
+      return $ filter pred allTracks
+  lArtistQuery :: Text -> l -> IO [Track]
+  lArtistQuery artist library = let
+      pred :: Track -> Bool
+      pred = (== artist) . mdArtist . tMetadata
+    in do
+      allTracks <- lAllTracks library
+      return $ filter pred allTracks
 
 data ListLibrary = ListLibrary { llList :: IO [Track] }
 instance Library ListLibrary where
@@ -47,4 +62,11 @@ unsafeParseTrack filePath = do
   return $ Track metadata filePath
 
 metadataGetter :: TagGetter Metadata
-metadataGetter = Metadata <$> (unTitle <$> titleGetter) <*> (unArtist <$> artistGetter) <*> (unAlbum <$> albumGetter)
+metadataGetter = Metadata <$>
+    (unTitle <$> titleGetter) <*>
+    (unArtist <$> artistGetter) <*>
+    (unAlbum <$> albumGetter) <*>
+    (unTrackNumber <$$> trackNumberGetter)
+
+(<$$>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+(<$$>) f v = (f <$>) <$> v
