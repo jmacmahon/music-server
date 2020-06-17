@@ -13,3 +13,8 @@ data Track = Track {
   tMetadata :: Metadata,
   tFilepath :: FilePath
 } deriving (Show)
+
+data Album = Album {
+  abTitle :: Text,
+  abArtist :: Text
+}
